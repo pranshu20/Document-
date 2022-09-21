@@ -22,7 +22,7 @@ app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs');
 app.use(express.static('assets'));
 // hello 
-
+//hello what
 app.use(cookieSession({
     name: 'tuto-session',
     keys: ['key1', 'key2']
