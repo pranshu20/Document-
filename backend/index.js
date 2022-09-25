@@ -189,33 +189,44 @@ app.get('/failed', (req, res) => res.send('You Failed to log in!'))
  git
 // In this route you can see that if the user is logged in u can acess his info in: req.user
 app.get('/good', isLoggedIn, async (req, res) =>{
-    //const ps=User.find({email:req.user.emails[0].value});
-    //console.log("hello!!");
     console.log(req.user.email);
-    User.find({email:req.user.email},async(err,ps)=>{
-        if(err){
-            const us=new User({email:req.user.email,name:req.user.displayName,uuid:uuid()});
-            await us.save();
-            console.log("hello");
-            console.log(us.id);
-            res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.email,object:us.id})
-        
-        }
-        else{
-            const ks =User.find({email:req.user.email});
-            //console.log("hello");
-            console.log(ks.uuid);
-            res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.emails[0].value,object:ps.id})
-       
-        }
-    })
-        
-    
-         
-    //console.log(us._id instanceof mongoose.Types.ObjectId);
-    //console.log(us);
-    //res.render('main');
-    
+    User.find({ email: req.user.email })
+			.then(async (data) => {
+                if (data.length === 0) {
+                    const us = new User({
+                        email: req.user.email,
+                        name: req.user.displayName,
+                    });
+                    await us.save();
+                    console.log("hello");
+                    console.log(us.id);
+                    res.render("main", {
+                        name: req.user.displayName,
+                        pic: req.user.photos[0].value,
+                        email: req.user.email,
+                        object: us.id,
+                    });
+				} else {
+                    console.log(data[0].id);
+                    res.render("main", {name: req.user.displayName, pic: req.user.photos[0].value, email: req.user.emails[0].value, object: data.id})
+				}
+			})
+			.catch();
+    //     if(err){
+    //         const us=new User({email:req.user.email,name:req.user.displayName});
+    //         await us.save();
+    //         console.log("hello");
+    //         console.log(us.id);
+    //         res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.email,object:us.id})
+    //     }
+    //     else{
+    //         const ks =User.find({email:req.user.email});
+    //         //console.log("hello");
+    //         console.log(ks.uuid);
+    //         res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.emails[0].value,object:ps.id})
+
+    //     }
+    // })
 })
  
 // Auth Routes
