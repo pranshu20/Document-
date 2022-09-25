@@ -192,7 +192,8 @@ app.get('/good', isLoggedIn, async (req, res) =>{
     //const ps=User.find({email:req.user.emails[0].value});
     //console.log("hello!!");
     console.log(req.user.email);
-    User.find({email:req.user.email},async(err,ps)=>{
+
+    await User.find({email:req.user.emails[0].value},async(err,ps)=>{
         if(err){
             const us=new User({email:req.user.email,name:req.user.displayName,uuid:uuid()});
             await us.save();
@@ -202,9 +203,9 @@ app.get('/good', isLoggedIn, async (req, res) =>{
         
         }
         else{
-            const ks =User.find({email:req.user.email});
+            //const ks =User.find({email:req.user.email});
             //console.log("hello");
-            console.log(ks.uuid);
+            console.log(ps.uuid);
             res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.emails[0].value,object:ps.id})
        
         }
