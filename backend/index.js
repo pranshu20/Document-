@@ -7,13 +7,11 @@ const app = express();
 const User=require('./models/user');
 const path = require('path');
 const fs=require('fs');
-
+const {v4:uuid}=require('uuid');
 const bodyParser = require("body-parser");
 var imageModel = require('./models/image');
-//const { default: file } = require('./models/file');
-//const connectDB = require('./config/db');
 const File=require('./models/file');
-//const passportGoogle = require('./config/passport-google-oauth2-strategy') ;
+
 require('dotenv').config();
 app.use(express.json());
 const cookieSession = require('cookie-session');
@@ -21,7 +19,6 @@ require('../passport-setup');
 app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs');
 app.use(express.static('assets'));
-// hello 
 
 app.use(cookieSession({
     name: 'tuto-session',
@@ -36,7 +33,8 @@ const connect = async () => {
 		await mongoose.connect(process.env.MONGO_URL);
 		console.log("Connected to mongoDB.");
 	} catch (error) {
-		throw error;
+        console.log("error");
+		//throw error;
 	}
 };
 connect();
@@ -74,7 +72,7 @@ var storage = multer.diskStorage({
 
 
 const uploadfile = multer({storage:storage});
-app.post('/uploadfile',uploadfile.single('myImage'),function (req,res){
+app.post('/uploadfile/:id',uploadfile.single('myImage'),function async (req,res){
     console.log(req.file.path);
     var img = fs.readFileSync(req.file.path);
     var encode_img = img.toString('base64');
@@ -92,18 +90,18 @@ app.post('/uploadfile',uploadfile.single('myImage'),function (req,res){
             res.send(final_img.image);
         }
     })
-    // async ()=>{
-    //     const user=await find({username :req.body.username});
-    //     const file =new file();
-    //     file.File=req.body.file;
-    //     file.username=req.body.name;
-    //     file.views.push(req.body.views);
-    //     // file.edit.push(req.body.edit);
-    //     await file.save();
-    //     user.MyFile.push(file.id);
-    //     await user.save();
+    async ()=>{
+        const user=await find({email :req.body.username});
+        const file =new file();
+        file.File=req.body.file;
+        file.username=req.body.name;
+        file.views.push(req.body.views);
+        // file.edit.push(req.body.edit);
+        await file.save();
+        user.MyFile.push(file.id);
+        await user.save();
         
-    // }
+    }
     
     
 });
@@ -190,14 +188,34 @@ app.get('/', (req, res) => res.render('pages/index'))
 app.get('/failed', (req, res) => res.send('You Failed to log in!'))
  
 // In this route you can see that if the user is logged in u can acess his info in: req.user
-app.get('/good', isLoggedIn, (req, res) =>{
-    async()=>{
-        us=new User();
-        us.email=eq.user.emails[0].value;
-        us.name=req.user.displayName;
-        await us.save();
-    }
-    res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.emails[0].value})
+app.get('/good', isLoggedIn, async (req, res) =>{
+    //const ps=User.find({email:req.user.emails[0].value});
+    //console.log("hello!!");
+    console.log(req.user.email);
+    User.find({email:req.user.email},async(err,ps)=>{
+        if(err){
+            const us=new User({email:req.user.email,name:req.user.displayName,uuid:uuid()});
+            await us.save();
+            console.log("hello");
+            console.log(us.id);
+            res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.email,object:us.id})
+        
+        }
+        else{
+            const ks =User.find({email:req.user.email});
+            //console.log("hello");
+            console.log(ks.uuid);
+            res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.emails[0].value,object:ps.id})
+       
+        }
+    })
+        
+    
+         
+    //console.log(us._id instanceof mongoose.Types.ObjectId);
+    //console.log(us);
+    //res.render('main');
+    
 })
  
 // Auth Routes
@@ -214,9 +232,9 @@ app.use('/main',(req,res)=>{
     res.render('main');
 });
 
-app.get("/uploader",(req,res)=>{
-    res.render('uploader');
-})
+// app.get("/uploader",(req,res)=>{
+//     res.render('uploader');
+// })
  
 app.get('/logout', (req, res) => {
     req.session = null;
