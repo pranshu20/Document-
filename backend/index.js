@@ -188,16 +188,6 @@ app.get('/', (req, res) => res.render('pages/index'))
 app.get('/failed', (req, res) => res.send('You Failed to log in!'))
  git
 // In this route you can see that if the user is logged in u can acess his info in: req.user
-<<<<<<< HEAD
-app.get('/good', isLoggedIn, (req, res) =>{
-    async()=>{
-        us=new User();
-        us.email=req.user.emails[0].value;
-        us.name=req.user.displayName;
-        await us.save();
-    }
-    res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.emails[0].value})
-=======
 app.get('/good', isLoggedIn, async (req, res) =>{
     //const ps=User.find({email:req.user.emails[0].value});
     //console.log("hello!!");
@@ -226,7 +216,6 @@ app.get('/good', isLoggedIn, async (req, res) =>{
     //console.log(us);
     //res.render('main');
     
->>>>>>> 30c7b990f0ade757f5f622b78e310403435d972e
 })
  
 // Auth Routes
