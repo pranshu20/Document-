@@ -74,7 +74,7 @@ var storage = multer.diskStorage({
 
 const uploadfile = multer({storage:storage});
 app.post('/uploadfile/:id',uploadfile.single('myImage'),function async (req,res){
-    //console.log(req.file.path);
+    //console.log(req.file.originalname);
     var img = fs.readFileSync(req.file.path);
     var encode_img = img.toString('base64');
     var final_img = {
@@ -82,7 +82,7 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),function async (req,res)
         image:new Buffer.from(encode_img,'base64')
     };
     async()=>{
-        const f=new file({path:req.file.path,name:req.file.name});
+        const f=new file({path:req.file.path,name:req.file.originalname});
         await f.save();
         const b=f.id;
         const user=await findById({_id});
@@ -220,6 +220,17 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 app.get("/uploader/:id",(req,res)=>{
     const ObjectId=req.params.id;
     res.render('uploader',{ObjectId});
+})
+
+app.get('/show',(req,res)=>{
+    var img = fs.readFileSync(req.path);
+    var encode_img = img.toString('base64');
+    var final_img = {
+        contentType:req.file.mimetype,
+        image:new Buffer.from(encode_img,'base64')
+    };
+    res.contentType(final_img.contentType);
+    res.send(final_img.image);
 })
  
 app.get('/logout', (req, res) => {
