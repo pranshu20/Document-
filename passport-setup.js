@@ -35,7 +35,7 @@ passport.use(new GoogleStrategy({
   //passReqToCallback:true
 },
 function(accessToken, refreshToken, profile, done) {
-  console.log(accessToken, refreshToken, profile)
+  //console.log(accessToken, refreshToken, profile)
   return done(null, profile);
 }
 ));

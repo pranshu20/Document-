@@ -7,7 +7,7 @@ const app = express();
 const User=require('./models/user');
 const path = require('path');
 const fs=require('fs');
-const {v4:uuid}=require('uuid');
+
 const bodyParser = require("body-parser");
 var imageModel = require('./models/image');
 const File=require('./models/file');
@@ -15,6 +15,7 @@ const File=require('./models/file');
 require('dotenv').config();
 app.use(express.json());
 const cookieSession = require('cookie-session');
+const { findById } = require('./models/user');
 require('../passport-setup');
 app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs');
@@ -73,35 +74,33 @@ var storage = multer.diskStorage({
 
 const uploadfile = multer({storage:storage});
 app.post('/uploadfile/:id',uploadfile.single('myImage'),function async (req,res){
-    console.log(req.file.path);
+    //console.log(req.file.path);
     var img = fs.readFileSync(req.file.path);
     var encode_img = img.toString('base64');
     var final_img = {
         contentType:req.file.mimetype,
-        image:new Buffer(encode_img,'base64')
+        image:new Buffer.from(encode_img,'base64')
     };
+    async()=>{
+        const f=new file({path:req.file.path,name:req.file.name});
+        await f.save();
+        const b=f.id;
+        const user=await findById({_id});
+        user.MyFiles.push(b);
+        await user.save();
+    }
     imageModel.create(final_img,function(err,result){
         if(err){
             console.log(err);
         }else{
             //console.log(result.img.Buffer);
-            //console.log("Saved To database");
-            res.contentType(final_img.contentType);
-            res.send(final_img.image);
+            //console.log(encode_img);
+            //res.contentType(final_img.contentType);
+            //res.send(final_img.image);
+            res.render('end');
         }
     })
-    async ()=>{
-        const user=await find({email :req.body.username});
-        const file =new file();
-        file.File=req.body.file;
-        file.username=req.body.name;
-        file.views.push(req.body.views);
-        // file.edit.push(req.body.edit);
-        await file.save();
-        user.MyFile.push(file.id);
-        await user.save();
-        
-    }
+    
     
     
 });
@@ -149,23 +148,6 @@ app.use('/sharedfile',function(req,res){
 
 
 
-
-//* requesting google for data
-
-// app.get(
-//   "/users/auth/google",
-//   passport.authenticate("google", { scope: ["profile", "email"] })
-// );
-// //* callback url to which google redirects and sends data
-// app.get(
-//   "/users/auth/google/callback",
-//   passport.authenticate("google", { failureRedirect: "/" }),function(req,res){
-//     return res.redirect('/');
-//   }
-// );
-
-////////
-
 mongoose.connection.on("disconnected", () => {
 	console.log("mongoDB disconnected!");
 });
@@ -186,7 +168,7 @@ app.use(passport.session());
 // Example protected and unprotected routes
 app.get('/', (req, res) => res.render('pages/index'))
 app.get('/failed', (req, res) => res.send('You Failed to log in!'))
- git
+
 // In this route you can see that if the user is logged in u can acess his info in: req.user
 app.get('/good', isLoggedIn, async (req, res) =>{
     console.log(req.user.email);
@@ -205,28 +187,20 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                         pic: req.user.photos[0].value,
                         email: req.user.email,
                         object: us.id,
+                        file:us.File,
                     });
 				} else {
                     console.log(data[0].id);
-                    res.render("main", {name: req.user.displayName, pic: req.user.photos[0].value, email: req.user.emails[0].value, object: data.id})
+                    res.render("main", {name: req.user.displayName, 
+                        pic: req.user.photos[0].value, 
+                        email: req.user.emails[0].value, 
+                        object: data[0].id,
+                        file:data[0].File,
+                    })
 				}
 			})
 			.catch();
-    //     if(err){
-    //         const us=new User({email:req.user.email,name:req.user.displayName});
-    //         await us.save();
-    //         console.log("hello");
-    //         console.log(us.id);
-    //         res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.email,object:us.id})
-    //     }
-    //     else{
-    //         const ks =User.find({email:req.user.email});
-    //         //console.log("hello");
-    //         console.log(ks.uuid);
-    //         res.render("main",{name:req.user.displayName,pic:req.user.photos[0].value,email:req.user.emails[0].value,object:ps.id})
-
-    //     }
-    // })
+    
 })
  
 // Auth Routes
@@ -239,13 +213,14 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
   }
 );
 
-app.use('/main',(req,res)=>{
-    res.render('main');
-});
+// app.use('/main',(req,res)=>{
+//     res.render('main');
+// });
 
-// app.get("/uploader",(req,res)=>{
-//     res.render('uploader');
-// })
+app.get("/uploader/:id",(req,res)=>{
+    const ObjectId=req.params.id;
+    res.render('uploader',{ObjectId});
+})
  
 app.get('/logout', (req, res) => {
     req.session = null;
