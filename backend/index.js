@@ -222,8 +222,10 @@ app.get("/uploader/:id",(req,res)=>{
     res.render('uploader',{ObjectId});
 })
 
-app.get('/show',(req,res)=>{
-    var img = fs.readFileSync(req.path);
+app.get('/show/:id',(req,res)=>{
+    const ob=req.params.id;
+    const f=file.find({ob});
+    var img = fs.readFileSync(f.path);
     var encode_img = img.toString('base64');
     var final_img = {
         contentType:req.file.mimetype,
