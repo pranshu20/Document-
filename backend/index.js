@@ -78,11 +78,13 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
     console.log("hello!!!");
     const f=new File({path:req.file.path,name:req.file.originalname});
     await f.save();
-    const b=f.id;
-    const oi=req.params.id;
-    const user=User.findById({oi});
-    user.MyFiles.push(b);
-    await user.save();
+    const b = f.id;
+    const user = User.findById(req.params.id)
+        .then(async (data) => {
+            data.MyFiles.push(b);
+            data.save();
+    })
+    
    
     var img = fs.readFileSync(req.file.path);
     var encode_img = img.toString('base64');
@@ -189,15 +191,15 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                         pic: req.user.photos[0].value,
                         email: req.user.email,
                         object: us.id,
-                        file:us.File,
+                        file: us.MyFiles,
                     });
 				} else {
-                    //console.log(data[0].id);
+                    console.log(data[0].MyFiles);
                     res.render("main", {name: req.user.displayName, 
                         pic: req.user.photos[0].value, 
                         email: req.user.emails[0].value, 
                         object: data[0].id,
-                        file:data[0].File,
+                        file:data[0].MyFiles,
                     })
 				}
 			})
@@ -220,7 +222,8 @@ app.get('/google/callback', passport.authenticate('google', { failureRedirect: '
 // });
 
 app.get("/uploader/:id",(req,res)=>{
-    const ObjectId=req.params.id;
+    const ObjectId = req.params.id;
+    console.log(ObjectId);
     res.render('uploader',{ObjectId});
 })
 

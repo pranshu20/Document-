@@ -64,7 +64,7 @@
           <h2 data-aos="fade-up">Your Personal<br>Daakiya</h2>
           <p data-aos="fade-up" data-aos-delay="100">Share your Documents hassle-free and securely.</p>
           <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
-            <a href="uploader/:<%=object%>" class="btn-book-a-table">Upload Documents</a>
+            <a href="uploader/<%=object%>" class="btn-book-a-table">Upload Documents</a>
             <a>.            .</a> </a>
             <a href="#book-a-table" class="btn-book-a-table">Received Documents</a>
            
@@ -127,8 +127,7 @@
         <td>
           <div class="d-flex align-items-center">
             <div class="ms-3">
-              <p class="fw-bold mb-1">12th DMC</p>
-              <p class="text-muted mb-0">PDF</p>
+              <p><%= file[0] %> </p>
             </div>
           </div>
         </td>
