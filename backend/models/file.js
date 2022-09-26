@@ -5,10 +5,10 @@ const fileSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	path: [{
+	path: {
 		type: String,
 		required: true,
-	}],
+	},
     
 
 });

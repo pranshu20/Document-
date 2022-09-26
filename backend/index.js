@@ -73,22 +73,24 @@ var storage = multer.diskStorage({
 
 
 const uploadfile = multer({storage:storage});
-app.post('/uploadfile/:id',uploadfile.single('myImage'),function async (req,res){
+app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
     //console.log(req.file.originalname);
+    console.log("hello!!!");
+    const f=new File({path:req.file.path,name:req.file.originalname});
+    await f.save();
+    const b=f.id;
+    const oi=req.params.id;
+    const user=User.findById({oi});
+    user.MyFiles.push(b);
+    await user.save();
+   
     var img = fs.readFileSync(req.file.path);
     var encode_img = img.toString('base64');
     var final_img = {
         contentType:req.file.mimetype,
         image:new Buffer.from(encode_img,'base64')
     };
-    async()=>{
-        const f=new file({path:req.file.path,name:req.file.originalname});
-        await f.save();
-        const b=f.id;
-        const user=await findById({_id});
-        user.MyFiles.push(b);
-        await user.save();
-    }
+    
     imageModel.create(final_img,function(err,result){
         if(err){
             console.log(err);
@@ -171,7 +173,7 @@ app.get('/failed', (req, res) => res.send('You Failed to log in!'))
 
 // In this route you can see that if the user is logged in u can acess his info in: req.user
 app.get('/good', isLoggedIn, async (req, res) =>{
-    console.log(req.user.email);
+    //console.log(req.user.email);
     User.find({ email: req.user.email })
 			.then(async (data) => {
                 if (data.length === 0) {
@@ -181,7 +183,7 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                     });
                     await us.save();
                     console.log("hello");
-                    console.log(us.id);
+                    //console.log(us.id);
                     res.render("main", {
                         name: req.user.displayName,
                         pic: req.user.photos[0].value,
@@ -190,7 +192,7 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                         file:us.File,
                     });
 				} else {
-                    console.log(data[0].id);
+                    //console.log(data[0].id);
                     res.render("main", {name: req.user.displayName, 
                         pic: req.user.photos[0].value, 
                         email: req.user.emails[0].value, 
