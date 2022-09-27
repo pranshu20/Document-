@@ -87,23 +87,16 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
     var img = fs.readFileSync(req.file.path);
     var encode_img = img.toString('base64');
     var final_img = {
-        contentType:req.file.mimetype,
-        image:new Buffer.from(encode_img,'base64')
+        contentType: req.file.mimetype,
+        image: new Buffer.from(encode_img,'base64')
     };
     imageModel.create(final_img,function(err,result){
         if(err){
             console.log(err);
         }else{
-            //console.log(result.img.Buffer);
-            //console.log(encode_img);
-            //res.contentType(final_img.contentType);
-            //res.send(final_img.image);
             res.render('end');
         }
     })
-    
-    
-    
 });
 
 
@@ -113,7 +106,7 @@ app.use('/share',  function (req,res){
 })
 
 app.post('/sharefile:id', function (req,res){
-    const f=file.findById(req.body.params);
+    const f = file.findById(req.body.params);
     if(req.body.view=="YES"){
         f.views.push(req.body.mail);
         f.save();
