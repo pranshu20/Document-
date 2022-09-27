@@ -100,48 +100,6 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
 });
 
 
-
-app.use('/share',  function (req,res){
-    res.render();
-})
-
-app.post('/sharefile:id', function (req,res){
-    const f = file.findById(req.body.params);
-    if(req.body.view=="YES"){
-        f.views.push(req.body.mail);
-        f.save();
-    }
-    async ()=>{
-        const u= await User.find({username:req.body.mail});
-        if(!u){
-            console.log("User not found");
-        }
-        else{
-            await u.shared.push(f.id);
-            u.save();
-        }
-    }
-    
-
-})
-
-app.use('/user:id', function (req,res){
-    async ()=>{
-        const a=await User.findById(req.user.id);
-        const b=a.populate('MyFiles');
-        res.render('user',{files:sb});
-    }
-    
-})
-app.use('/sharedfile',function(req,res){
-    
-    res.render();
-})
-
-
-
-
-
 mongoose.connection.on("disconnected", () => {
 	console.log("mongoDB disconnected!");
 });
@@ -207,9 +165,7 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                         filename,
                     })
 				}
-			})
-			.catch();
-    
+			})    
 })
  
 // Auth Routes
