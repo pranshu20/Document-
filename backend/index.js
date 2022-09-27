@@ -100,6 +100,7 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
 });
 
 
+
 mongoose.connection.on("disconnected", () => {
 	console.log("mongoDB disconnected!");
 });
@@ -201,6 +202,27 @@ app.get('/show/:id',(req,res)=>{
         res.contentType(final_img.contentType);
         res.send(final_img.image);
     })
+})
+
+app.get('/:userID/share/:id',(req,res)=>{
+    const id=req.params.id;
+    const userid=req.params.userID;
+    res.render('send',{id,userid});
+})
+app.post('/:userId/recieve/:id',(req,res)=>{
+    const id=req.params.id;
+    const userid=req.params.userId;
+    User.find({email:userid}).then(async(data)=>{
+        if(data.length===0){
+            const r=new User({email:userid});
+            await r.save();
+            r.shared.push(id);
+        }
+        else{
+            data.shared.push(id);
+        }
+    })
+    res.render('final');
 })
  
 app.get('/logout', (req, res) => {
