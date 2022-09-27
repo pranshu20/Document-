@@ -101,9 +101,6 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
 
 
 
-
-
-
 mongoose.connection.on("disconnected", () => {
 	console.log("mongoDB disconnected!");
 });
@@ -169,9 +166,7 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                         filename,
                     })
 				}
-			})
-			.catch();
-    
+			})    
 })
  
 // Auth Routes

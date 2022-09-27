@@ -49,9 +49,7 @@
         </ul>
       </nav><!-- .navbar -->
 
-      <a class="btn-book-a-table" href="#book-a-table">Book a Table</a>
-      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
-      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+      <span><%= email %> </span>
 
     </div>
   </header><!-- End Header -->
@@ -97,11 +95,14 @@
         <tr>
           <td>
             <div class="d-flex align-items-center">
-              <div class="ms-3">
+              <div class="ms-5">
                 <p>
                   <a href="/show/<%= file[i] %> ">
                     <%= filename[i] %>
                   </a>
+                  <form action="/<%= email %>/share/<%= file[i] %>">
+                    <button class="btn btn-primary">Share</button>
+                  </form>
                 </p>
               </div>
             </div>
