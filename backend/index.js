@@ -101,44 +101,6 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
 
 
 
-app.use('/share',  function (req,res){
-    res.render();
-})
-
-app.post('/sharefile:id', function (req,res){
-    const f = file.findById(req.body.params);
-    if(req.body.view=="YES"){
-        f.views.push(req.body.mail);
-        f.save();
-    }
-    async ()=>{
-        const u= await User.find({username:req.body.mail});
-        if(!u){
-            console.log("User not found");
-        }
-        else{
-            await u.shared.push(f.id);
-            u.save();
-        }
-    }
-    
-
-})
-
-app.use('/user:id', function (req,res){
-    async ()=>{
-        const a=await User.findById(req.user.id);
-        const b=a.populate('MyFiles');
-        res.render('user',{files:sb});
-    }
-    
-})
-app.use('/sharedfile',function(req,res){
-    
-    res.render();
-})
-
-
 
 
 
@@ -245,6 +207,27 @@ app.get('/show/:id',(req,res)=>{
         res.contentType(final_img.contentType);
         res.send(final_img.image);
     })
+})
+
+app.get('/:userID/share/:id',(req,res)=>{
+    const id=req.params.id;
+    const userid=req.params.userID;
+    res.render('send',{id,userid});
+})
+app.post('/:userId/recieve/:id',(req,res)=>{
+    const id=req.params.id;
+    const userid=req.params.userId;
+    User.find({email:userid}).then(async(data)=>{
+        if(data.length===0){
+            const r=new User({email:userid});
+            await r.save();
+            r.shared.push(id);
+        }
+        else{
+            data.shared.push(id);
+        }
+    })
+    res.render('final');
 })
  
 app.get('/logout', (req, res) => {
