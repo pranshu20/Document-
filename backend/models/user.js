@@ -17,16 +17,16 @@ const UserSchema = new mongoose.Schema({
         //required: true,
     },
     shared:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'file',
+        type: String,
+        // ref: 'file',
     }],
     // edit: [{
     //     type: String,
     //     required: true,
     // }],
     MyFiles : [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'file',
+        type: String,
+        // ref: 'file',
     }]
 
 
