@@ -79,6 +79,7 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
     const f=new File({path:req.file.path,name:req.file.originalname});
     await f.save();
     const b = f.id;
+    console.log(b);
     const user = User.findById(req.params.id)
         .then(async (data) => {
             data.MyFiles.push(b);
@@ -194,8 +195,6 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                             filename.push(data.name);
                             console.log(filename[0]);
                         })
-                        
-                        
                     }
                     res.render("main", {
                         name: req.user.displayName,
@@ -208,15 +207,16 @@ app.get('/good', isLoggedIn, async (req, res) =>{
 				} else {
                     //console.log(data[0].MyFiles);
                     const filename=[];
-                    const files=data[0].MyFiles;
+                    const files = data[0].MyFiles;
+                    console.log(data[0]);
                     for(let file of files){
-                        const fi=File.findById(file).then(async(data)=>{
+                        await File.findById(file).then((data)=>{
                             filename.push(data.name);
                             console.log(data.name);
                             console.log(filename[0]);
                         })
-                        
                     }
+                    console.log(data[0].MyFiles[0]);
                     res.render("main", {name: req.user.displayName, 
                         pic: req.user.photos[0].value, 
                         email: req.user.emails[0].value, 
@@ -252,7 +252,7 @@ app.get("/uploader/:id",(req,res)=>{
 
 app.get('/show/:id',(req,res)=>{
     const ob=req.params.id;
-    const f=file.find({id:ob});
+    const f=File.find({id:ob});
     var img = fs.readFileSync(f.path);
     var encode_img = img.toString('base64');
     var final_img = {
