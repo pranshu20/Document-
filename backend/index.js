@@ -186,20 +186,43 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                     await us.save();
                     console.log("hello");
                     //console.log(us.id);
+                    const filename=[];
+                    const files=us.MyFiles;
+                    for(let file of files){
+                        File.findById(file).then(async(data)=>{
+                            console.log(data);
+                            filename.push(data.name);
+                            console.log(filename[0]);
+                        })
+                        
+                        
+                    }
                     res.render("main", {
                         name: req.user.displayName,
                         pic: req.user.photos[0].value,
                         email: req.user.email,
                         object: us.id,
                         file: us.MyFiles,
+                        filename,
                     });
 				} else {
-                    console.log(data[0].MyFiles);
+                    //console.log(data[0].MyFiles);
+                    const filename=[];
+                    const files=data[0].MyFiles;
+                    for(let file of files){
+                        const fi=File.findById(file).then(async(data)=>{
+                            filename.push(data.name);
+                            console.log(data.name);
+                            console.log(filename[0]);
+                        })
+                        
+                    }
                     res.render("main", {name: req.user.displayName, 
                         pic: req.user.photos[0].value, 
                         email: req.user.emails[0].value, 
                         object: data[0].id,
                         file:data[0].MyFiles,
+                        filename,
                     })
 				}
 			})
@@ -229,7 +252,7 @@ app.get("/uploader/:id",(req,res)=>{
 
 app.get('/show/:id',(req,res)=>{
     const ob=req.params.id;
-    const f=file.find({ob});
+    const f=file.find({id:ob});
     var img = fs.readFileSync(f.path);
     var encode_img = img.toString('base64');
     var final_img = {
