@@ -79,21 +79,17 @@ app.post('/uploadfile/:id',uploadfile.single('myImage'),async (req,res)=>{
     const f=new File({path:req.file.path,name:req.file.originalname});
     await f.save();
     const b = f.id;
-    console.log(b);
     const user = User.findById(req.params.id)
         .then(async (data) => {
             data.MyFiles.push(b);
             data.save();
     })
-    
-   
     var img = fs.readFileSync(req.file.path);
     var encode_img = img.toString('base64');
     var final_img = {
         contentType:req.file.mimetype,
         image:new Buffer.from(encode_img,'base64')
     };
-    
     imageModel.create(final_img,function(err,result){
         if(err){
             console.log(err);
@@ -185,15 +181,12 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                         name: req.user.displayName,
                     });
                     await us.save();
-                    console.log("hello");
                     //console.log(us.id);
                     const filename=[];
                     const files=us.MyFiles;
                     for(let file of files){
-                        File.findById(file).then(async(data)=>{
-                            console.log(data);
+                        await File.findById(file).then((data)=>{
                             filename.push(data.name);
-                            console.log(filename[0]);
                         })
                     }
                     res.render("main", {
@@ -208,15 +201,11 @@ app.get('/good', isLoggedIn, async (req, res) =>{
                     //console.log(data[0].MyFiles);
                     const filename=[];
                     const files = data[0].MyFiles;
-                    console.log(data[0]);
                     for(let file of files){
                         await File.findById(file).then((data)=>{
                             filename.push(data.name);
-                            console.log(data.name);
-                            console.log(filename[0]);
                         })
                     }
-                    console.log(data[0].MyFiles[0]);
                     res.render("main", {name: req.user.displayName, 
                         pic: req.user.photos[0].value, 
                         email: req.user.emails[0].value, 
@@ -252,15 +241,17 @@ app.get("/uploader/:id",(req,res)=>{
 
 app.get('/show/:id',(req,res)=>{
     const ob=req.params.id;
-    const f=File.find({id:ob});
-    var img = fs.readFileSync(f.path);
-    var encode_img = img.toString('base64');
-    var final_img = {
-        contentType:req.file.mimetype,
-        image:new Buffer.from(encode_img,'base64')
-    };
-    res.contentType(final_img.contentType);
-    res.send(final_img.image);
+    File.findById(ob).then((data) => {
+        console.log(data)
+        var img = fs.readFileSync(data.path);
+        var encode_img = img.toString("base64");
+        var final_img = {
+            contentType: 'image/jpeg',
+            image: new Buffer.from(encode_img, "base64"),
+        };
+        res.contentType(final_img.contentType);
+        res.send(final_img.image);
+    })
 })
  
 app.get('/logout', (req, res) => {
