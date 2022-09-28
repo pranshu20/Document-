@@ -15,8 +15,10 @@ const File=require('./models/file');
 require('dotenv').config();
 app.use(express.json());
 const cookieSession = require('cookie-session');
-const { findById } = require('./models/user');
+const { findById, findOneAndUpdate } = require('./models/user');
 require('../passport-setup');
+
+app.use(express.urlencoded({extended:true}));
 app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs');
 app.use(express.static('assets'));
@@ -211,18 +213,23 @@ app.get('/:userID/share/:id',(req,res)=>{
 })
 app.post('/:userId/recieve/:id',(req,res)=>{
     const id=req.params.id;
-    const userid=req.params.userId;
+    const userid=req.body.email;
+    console.log(id);
     User.find({email:userid}).then(async(data)=>{
+        //console.log(data);
         if(data.length===0){
             const r=new User({email:userid});
-            await r.save();
+            r.save();
             r.shared.push(id);
+            console.log(r);
         }
         else{
-            data.shared.push(id);
+            //const a={email:userid};
+            //const b={};
+            await User.findOneAndUpdate({email:userid}, {$push: { shared: id  }});
         }
     })
-    res.render('final');
+    res.redirect('/good');
 })
  
 app.get('/logout', (req, res) => {
