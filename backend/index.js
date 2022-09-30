@@ -214,14 +214,14 @@ app.get('/:userID/share/:id',(req,res)=>{
 app.post('/:userId/recieve/:id',(req,res)=>{
     const id=req.params.id;
     const userid=req.body.email;
-    console.log(id);
+    //console.log(id);
     User.find({email:userid}).then(async(data)=>{
         //console.log(data);
         if(data.length===0){
             const r=new User({email:userid});
             r.save();
             r.shared.push(id);
-            console.log(r);
+            //console.log(r);
         }
         else{
             //const a={email:userid};
@@ -231,7 +231,42 @@ app.post('/:userId/recieve/:id',(req,res)=>{
     })
     res.redirect('/good');
 })
- 
+
+app.use('/recieved/:id',(req,res)=>{
+    const id=req.params.id;
+    const fname=[];
+    User.findById(id).then(async(data)=>{
+        const sh=data.shared;
+        console.log(sh);
+        for(let fil of sh){
+            await File.findById(fil).then(async(data)=>{
+                console.log(data.name);
+                fname.push(data.name);
+            })
+            
+        }
+        res.render('recieved',{
+            fname,
+            file: sh
+
+        })
+    })
+})
+
+app.use('/showRecieve/:id',(req,res)=>{
+    const ob=req.params.id;
+    File.findById(ob).then((data) => {
+        console.log(data)
+        var img = fs.readFileSync(data.path);
+        var encode_img = img.toString("base64");
+        var final_img = {
+            contentType: 'image/jpeg',
+            image: new Buffer.from(encode_img, "base64"),
+        };
+        res.contentType(final_img.contentType);
+        res.send(final_img.image);
+    })
+})
 app.get('/logout', (req, res) => {
     req.session = null;
     req.logout();
