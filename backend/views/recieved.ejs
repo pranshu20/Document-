@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section id="about" class="about">
+        <div class="container" data-aos="fade-up">
+  
+          <div class="section-header">
+            <p>Your <span>Latest Uploads</span></p>
+          </div>
+           <!--search table-->
+    <table class="table align-middle mb-0 bg-white">
+      <thead class="bg-light">
+        <tr>
+          <th>Document Name : <%= fname[0] %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for(let i=0; i < fname.length; i++) { %>
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="ms-5">
+                  <p>
+                    <a href="/showRecieve/<%= file[i] %> " >
+                      <%= fname[i] %>
+                    </a>
+                    
+                  </p>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <% } %>
+      </tbody>
+    </table>
+    
+  
+    
+</body>
+</html>
