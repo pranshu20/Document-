@@ -5,12 +5,6 @@ const GoogleStrategy = require('passport-google-oauth2').Strategy;
 //   passReqToCallBack: true
 // })),
 
-
-
-
-
-
-
 passport.serializeUser(function(user, done) {
     /*
     From the user take just the id (to minimize the cookie size) and just pass the id of the user
