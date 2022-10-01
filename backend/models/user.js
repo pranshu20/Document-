@@ -1,7 +1,7 @@
 //import { ObjectID } from "bson";
 const mongoose =require("mongoose");
 //import { stringify } from "querystring";
-
+//if( !mongoose.Types.ObjectId.isValid(id) ) return false;
 const UserSchema = new mongoose.Schema({
 	email: {
 		type: String,

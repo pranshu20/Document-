@@ -157,14 +157,14 @@ app.get(
 
 app.get("/uploader/:id", (req, res) => {
 	const ObjectId = req.params.id;
-	console.log(ObjectId);
+	//console.log(ObjectId);
 	res.render("pages/upload", { ObjectId });
 });
 
 app.get("/show/:id", (req, res) => {
 	const ob = req.params.id;
 	File.findById(ob).then((data) => {
-		console.log(data);
+		//console.log(data);
 		var img = fs.readFileSync(data.path);
 		var encode_img = img.toString("base64");
 		var final_img = {
@@ -207,10 +207,10 @@ app.use("/recieved/:id", (req, res) => {
 	const fname = [];
 	User.findById(id).then(async (data) => {
 		const sh = data.shared;
-		console.log(sh);
+		//console.log(sh);
 		for (let fil of sh) {
 			await File.findById(fil).then(async (data) => {
-				console.log(data.name);
+				//console.log(data.name);
 				fname.push(data.name);
 			});
 		}
@@ -224,7 +224,7 @@ app.use("/recieved/:id", (req, res) => {
 app.use("/showRecieve/:id", (req, res) => {
 	const ob = req.params.id;
 	File.findById(ob).then((data) => {
-		console.log(data);
+		//console.log(data);
 		var img = fs.readFileSync(data.path);
 		var encode_img = img.toString("base64");
 		var final_img = {
