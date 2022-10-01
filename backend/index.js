@@ -70,7 +70,7 @@ app.post("/uploadfile/:id", uploadfile.single("myImage"), async (req, res) => {
 		if (err) {
 			console.log(err);
 		} else {
-			res.render("end");
+			res.render("pages/endgame");
 		}
 	});
 });
