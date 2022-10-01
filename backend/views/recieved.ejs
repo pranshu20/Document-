@@ -13,32 +13,34 @@
           <div class="section-header">
             <p>Your <span>Latest Uploads</span></p>
           </div>
-           <!--search table-->
-    <table class="table align-middle mb-0 bg-white">
-      <thead class="bg-light">
-        <tr>
-          <th>Document Name : <%= fname[0] %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for(let i=0; i < fname.length; i++) { %>
-          <tr>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="ms-5">
-                  <p>
-                    <a href="/showRecieve/<%= file[i] %> " >
-                      <%= fname[i] %>
-                    </a>
-                    
-                  </p>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <% } %>
-      </tbody>
-    </table>
+          <table class="table mb-5 css-serial">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Document Name</th>
+                    <th scope="col">Action</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i=0;i<fname.length;i++) { %>
+                    <tr>
+                        <td></td>
+                        <td><a href="/showRecieve/<%= file[i] %> ">
+                                <%= fname[i] %>
+                            </a></td>
+                        
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+
+
+
+
+
+          
+    
     
   
     
