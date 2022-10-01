@@ -158,7 +158,7 @@ app.get(
 app.get("/uploader/:id", (req, res) => {
 	const ObjectId = req.params.id;
 	console.log(ObjectId);
-	res.render("uploader", { ObjectId });
+	res.render("pages/upload", { ObjectId });
 });
 
 app.get("/show/:id", (req, res) => {
