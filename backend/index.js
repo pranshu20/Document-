@@ -104,36 +104,37 @@ app.get("/good", isLoggedIn, async (req, res) => {
 				name: req.user.displayName,
 			});
 			await us.save();
-			const filename = [];
+			const fileName = [];
 			const files = us.MyFiles;
 			for (let file of files) {
 				await File.findById(file).then((data) => {
-					filename.push(data.name);
+					fileName.push(data.name);
 				});
 			}
-			res.render("main", {
+			res.render("pages/main", {
 				name: req.user.displayName,
 				pic: req.user.photos[0].value,
 				email: req.user.email,
 				object: us.id,
 				file: us.MyFiles,
-				filename,
+				fileName,
 			});
 		} else {
-			const filename = [];
+			const fileName = [];
+			//console.log(data[0]);
 			const files = data[0].MyFiles;
 			for (let file of files) {
 				await File.findById(file).then((data) => {
-					filename.push(data.name);
+					fileName.push(data.name);
 				});
 			}
-			res.render("main", {
+			res.render("pages/main", {
 				name: req.user.displayName,
 				pic: req.user.photos[0].value,
 				email: req.user.emails[0].value,
 				object: data[0].id,
 				file: data[0].MyFiles,
-				filename,
+				fileName,
 			});
 		}
 	});
